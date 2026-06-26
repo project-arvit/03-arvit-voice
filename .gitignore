@@ -60,3 +60,7 @@ samples/*
 # ==============================
 # ======   GITIGNORE   =========
 # ==============================
+
+# WendyOS deploy overlay (temporary, holds synced .env path) — never commit
+wendy.run.json
+wendy.json.bak
