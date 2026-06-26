@@ -1,0 +1,31 @@
+# Docker path for arvit-voice. Mirrors the Apple `container` path
+# (scripts/container-up.sh), built from the SAME Dockerfile.
+#
+#   docker compose up --build            # serve the WS voice loop
+#   docker compose run --rm voice pytest -q   # run the suite inside the image
+#
+# The published port is bound to 127.0.0.1 (project convention). Secrets come
+# ONLY from .env via env_file (gitignored); commit .env.example only.
+services:
+  voice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: arvit-voice:latest
+    container_name: arvit-voice
+    env_file:
+      - path: .env
+        required: false
+    # Loopback-only publish. On the Orin/WendyOS this runs with the
+    # network(host) entitlement instead (see README).
+    ports:
+      - "127.0.0.1:8765:8765"
+    # GPU on the Orin: uncomment to grant CUDA (WendyOS gpu entitlement).
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+    command: ["uvicorn", "arvit_voice.main:app", "--host", "127.0.0.1", "--port", "8765"]

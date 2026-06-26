@@ -1,0 +1,45 @@
+[project]
+name = "arvit-voice"
+version = "0.1.0"
+description = "ARVIT voice teammate: bidirectional real-time voice (faster-whisper STT -> Claude Opus 4.8 on Bedrock -> Piper TTS) over Pipecat."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    # Real-time voice orchestration (STT/VAD/LLM/TTS pipeline + WS transport).
+    "pipecat-ai[silero,whisper,piper,webrtc]>=0.0.60",
+    # Local STT on the Orin (CTranslate2 Whisper).
+    "faster-whisper>=1.0",
+    # Local neural TTS on the Orin.
+    "piper-tts>=1.2",
+    # WebSocket transport host.
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    # Cloud LLM stage only (Claude Opus 4.8 via AWS Bedrock).
+    "anthropic[bedrock]>=0.40",
+]
+
+[project.optional-dependencies]
+# The tests run with ONLY these installed (no pipecat/whisper/piper needed):
+#   uv pip install "anthropic[bedrock]" pytest pytest-asyncio
+test = [
+    "anthropic[bedrock]>=0.40",
+    "pytest>=8.0",
+]
+
+[project.scripts]
+arvit-voice = "arvit_voice.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["arvit_voice"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+# Import the package straight from the source tree without an editable install,
+# so `uv run pytest` works after a bare `uv pip install "anthropic[bedrock]" pytest`.
+pythonpath = ["."]
