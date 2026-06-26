@@ -1,0 +1,19 @@
+{
+  "$schema": "https://wendy.sh/schemas/wendy.json",
+  "appId": "arvit-voice",
+  "version": "0.1.0",
+  "platform": "wendyos",
+  "language": "python",
+  "entitlements": [
+    { "type": "network", "mode": "host" },
+    { "type": "audio" },
+    { "type": "usb" },
+    { "type": "gpu" },
+    { "type": "persist", "name": "arvit-voice-models", "path": "/models" }
+  ],
+  "readiness": {
+    "tcpSocket": { "port": 8765 },
+    "timeoutSeconds": 300
+  },
+  "python": {}
+}
